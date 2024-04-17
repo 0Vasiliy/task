@@ -1,9 +1,22 @@
 <template>
-  <section
+ <section>
+  <div class="selected"> 
+    <ul class="selected-menu">
+      <li><a href="#">Сортировать по рейтингу</a>
+          <ul>
+            <li><a href="#" @click="sortList" v-bind="props">По высокому рейтингу</a></li>
+            <li><a href="#" @click="sortList2" v-bind="props">По низкому рейтингу</a></li>
+            <li><a href="#" @click="sortList3" v-bind="props">Без рейтинга</a></li>
+          </ul>
+      </li>
+    </ul>
+  </div> 
+  <div class="list-block"
     :style="`background: ${options.color}`"
     @drop="onDrop($event, options.id)"
     @dragover.prevent
     @dragenter.prevent>
+   
     <div class="title">
       <h2>
         {{ options.title }}
@@ -34,14 +47,14 @@
       :form="form"
       @save-card="addCard"
       @close-form="isNewCardDialogOpen = false" />
-  </section>
+  </div>
+ </section>
 </template>
 
 <script setup>
   import { ref, inject } from 'vue';
   import CardItem from './CardItem.vue';
   import CardForm from './CardForm.vue';
-
   const firstList = inject('firstList');
   const secondList = inject('secondList');
   const lastList = inject('lastList');
@@ -129,10 +142,33 @@
         break;
     }
   }
+  
+  function sortList() {
+    getLocalCards();
+    cards = cards.value.sort((a, b) => b.rating.rate - a.rating.rate);
+  }
+  function sortList2() {
+    getLocalCards();
+    cards = cards.value.sort((a, b) => a.rating.rate - b.rating.rate);
+  }
+  function sortList3() {
+    getLocalCards();
+    cards = cards.value.sort((a, b) => { return Math.random() - 0.5 });
+  }
 </script>
 
 <style lang="scss" scoped>
-  section {
+  section{
+    padding: 10px;
+    width: 400px;
+    min-height: 500px;
+    height: fit-content;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .list-block {
     padding: 10px;
     width: 400px;
     min-height: 500px;
@@ -160,4 +196,45 @@
       }
     }
   }
+  .selected{
+      height: 55px;
+      width: 400px;
+      border: 1px solid gray;
+      background: white;
+      color: black;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+    .selected-menu{
+        display: flex;
+        padding: 10px;
+      }
+    .selected-menu li{
+      width: 380px;
+      list-style: none;
+      position:relative;
+      background: white;
+    }
+    .selected-menu a{
+      width: 100%;
+      text-decoration: none ;
+      color: black;
+      display: block;
+      padding: 0 10px;
+      height: 40px;
+      line-height: 40px;
+      transition: all .5s;
+    }
+    .selected-menu a:hover{
+      background: gray;
+      width: 100%;
+    }
+    .selected-menu ul{
+      position: absolute;
+      display: none;
+    }
+    .selected-menu li:hover>ul{
+      display: block;
+    }
+
 </style>
